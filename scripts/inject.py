@@ -182,11 +182,14 @@ def _build_global_memory(store: Store,
         sources = [(h, c, r) for h, c, r in _read_memory_dir(memory_dir)
                    if ".example" not in str(h)]
 
+    head_only = _head_only_names()
     for heading, content, rel_path in sources:
         full_path = f"memory/{rel_path}"
         deleted = _get_deleted_sections(store, full_path)
         if deleted:
             content = _strip_deleted_from_content(content, deleted)
+        if Path(rel_path).name in head_only:
+            content = _extract_first_section(content)
         if not content.strip():
             continue
         lines.append(f"## MIND 记忆 — {heading}")
@@ -307,8 +310,36 @@ def _global_source_files(store: Store) -> list[tuple[Path, str]]:
     return files
 
 
+def _extract_first_section(content: str) -> str:
+    """head_only 注入策略：取「# 一级标题 + 第一个 ## 二级章节」。
+    即文件头部（如 math 规范的「硬性约束」段），到第二个 ## 前为止。"""
+    lines = content.splitlines()
+    out: list[str] = []
+    seen_title = False
+    for ln in lines:
+        if ln.startswith("# "):
+            out.append(ln)          # 一级标题（文件名标题）
+            seen_title = True
+            continue
+        if ln.startswith("## "):
+            if any(l.startswith("## ") for l in out):
+                break               # 第二个 ## 章节 → 停（头部只到第一个 ## 段）
+            out.append(ln)          # 第一个 ## 章节开始
+            continue
+        if seen_title:
+            out.append(ln)          # 标题后的内容（引言 + 第一个 ## 段内容）
+    return "\n".join(out).strip()
+
+
+def _head_only_names() -> set[str]:
+    """config.inject.head_only：只注入头部章节的文件名集合。"""
+    cfg = load_config()
+    return set(cfg.get("inject", {}).get("head_only", []))
+
+
 def _render_global_source(store: Store, fpath: Path, rel_path: str) -> str:
-    """渲染单个注入源为带标题的 markdown，应用 registry 删除过滤 + 安全截断。"""
+    """渲染单个注入源为带标题的 markdown，应用 registry 删除过滤 + 安全截断。
+    config.inject.head_only 命中的文件只注入第一个 '# ' 章节。"""
     try:
         content = fpath.read_text(encoding="utf-8").strip()
     except Exception:
@@ -319,6 +350,11 @@ def _render_global_source(store: Store, fpath: Path, rel_path: str) -> str:
     deleted = _get_deleted_sections(store, rel_path)
     if deleted:
         content = _strip_deleted_from_content(content, deleted)
+    if not content.strip():
+        return ""
+
+    if fpath.name in _head_only_names():
+        content = _extract_first_section(content)
     if not content.strip():
         return ""
 
@@ -435,15 +471,17 @@ def _build_turns_section(store: Store,
 
 def _build_dailies_section(store: Store,
                            project_slugs: list[str] | None,
-                           limit: int | None = None) -> str:
-    """最近 30 天日报。"""
+                           limit: int | None = None,
+                           skip: int = 0) -> str:
+    """最近 30 天日报。skip/limit 用于拆成多个 10K 以内的 hook。"""
     cfg = load_config()
     daily_days = cfg["windows"]["daily_days"]
     lines = [f"## 最近 {daily_days} 天日报", ""]
     dailies = store.get_daily_reports_in_window(
         daily_days, project=project_slugs)
     if dailies:
-        for d in (dailies[:limit] if limit else dailies):
+        end = (skip + limit) if limit else None
+        for d in dailies[skip:end]:
             lines.append(f"### {d['date']}: {d['title']}")
             lines.append(d["content"])
             lines.append(f"→ [日报详情](../data/archive/{d['file_path']})")
@@ -455,12 +493,15 @@ def _build_dailies_section(store: Store,
 
 
 def _build_monthlies_section(store: Store,
-                             project_slugs: list[str] | None) -> str:
-    """历史月报（永久保留）。"""
+                             project_slugs: list[str] | None,
+                             limit: int | None = None,
+                             skip: int = 0) -> str:
+    """历史月报（永久保留）。skip/limit 用于拆成多个 10K 以内的 hook。"""
     lines = ["## 历史月报", ""]
     monthlies = store.get_all_monthly_reports(project=project_slugs)
     if monthlies:
-        for m in monthlies:
+        end = (skip + limit) if limit else None
+        for m in monthlies[skip:end]:
             lines.append(f"### {m['month']}: {m['title']}")
             preview = m["content"][:300]
             if len(m["content"]) > 300:
@@ -645,6 +686,13 @@ def main():
     except (ValueError, IndexError):
         pass
 
+    skip = 0
+    try:
+        ski = sys.argv.index("--skip")
+        skip = int(sys.argv[ski + 1])
+    except (ValueError, IndexError):
+        pass
+
     json_output = "--json-output" in sys.argv
     stdout = "--stdout" in sys.argv
 
@@ -680,9 +728,10 @@ def main():
                                           limit=limit or 30)
         elif section == "dailies":
             output = _build_dailies_section(store, project_slugs,
-                                            limit=limit or 5)
+                                            limit=limit or 5, skip=skip)
         elif section == "monthlies":
-            output = _build_monthlies_section(store, project_slugs)
+            output = _build_monthlies_section(store, project_slugs,
+                                              limit=limit, skip=skip)
         else:
             print(f"Unknown section: {section}", file=sys.stderr)
             sys.exit(1)
@@ -693,6 +742,7 @@ def main():
             "file": global_file,
             "pack": pack,
             "limit": limit,
+            "skip": skip,
             "chars": len(output),
             "project_slug": project_slug,
             "project_slugs": project_slugs,

@@ -57,6 +57,7 @@ def load_config() -> dict:
     cfg.setdefault("inject", {
         "global_folders": [],
         "shards": 24,
+        "head_only": [],   # 只注入第一个 '# ' 章节的文件名
     })
     cfg.setdefault("llm", {
         "model": "deepseek-v4-flash",

@@ -1,0 +1,10 @@
+{
+  "id": "t5-tikz-fix",
+  "difficulty": "C",
+  "max_rounds": 3,
+  "title": "修复 TikZ 图的结构问题",
+  "description": "src/diagram.tex 是一段结构有问题的 TikZ 图：可能存在 begin/end 不配平、节点缺少 at 坐标、节点文本过长（溢出，>20 字符）等问题。修复它——保持图的意图不变，但让结构校验（src/check_structure.py 的 check_structure 函数）通过，即：所有节点都有 at 坐标、文本不超长、begin/end 配平。不改校验器。",
+  "hint_round1": "业务测试仍失败（校验器报错）。对照 check_structure.py 的三个检查项逐一修 diagram.tex。",
+  "check_biz": "pytest tests/test_biz.py -q",
+  "check_regress": "pytest tests/test_regress.py -q"
+}

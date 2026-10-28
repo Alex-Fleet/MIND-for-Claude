@@ -34,9 +34,9 @@ WHITELIST = {
     ROOT / "scripts" / "rename_memory_path.py",
 }
 
-# 排除目录：私密数据 / VCS / 缓存 / 依赖
+# 排除目录：私密数据 / VCS / 缓存 / 依赖 / 历史归档
 EXCLUDED_PARTS = {".git", "data", "__pycache__", "node_modules",
-                  ".claude", "dist", ".venv", "venv"}
+                  ".claude", "dist", ".venv", "venv", "archive"}
 
 
 # ── 文件存在性 ──────────────────────────────────────────────

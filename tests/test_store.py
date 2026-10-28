@@ -24,9 +24,12 @@ def test_ensure_session_empty_values(store):
 # ── Turns：幂等是核心 ─────────────────────────────────────
 
 def _seed_turn(store, sid="s1", seq=0):
+    # 相对时间（1 天前）——窗口查询按当前时间动态算，固定历史时间戳会滑出窗口
+    from datetime import datetime, timedelta, timezone
+    ts = (datetime.now(timezone.utc) - timedelta(days=1)).strftime("%Y-%m-%dT%H:%M:%SZ")
     return store.insert_turn(
         sid, seq, "user", "hello", None,
-        '{"role":"user","content":"hello"}', "2026-08-01T10:00:00Z",
+        '{"role":"user","content":"hello"}', ts,
     )
 
 

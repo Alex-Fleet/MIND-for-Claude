@@ -1,0 +1,10 @@
+{
+  "id": "t4-refactor",
+  "difficulty": "C",
+  "max_rounds": 3,
+  "title": "跨模块重构：为 format_entry 新增 separator 参数",
+  "description": "core.py 的 format_entry(name, tags) 目前固定用逗号分隔。新需求：支持可选参数 separator（默认 ','），调用方可指定分隔符。你要：(1) 修改 core.py 让 format_entry 支持 separator 参数且默认行为不变；(2) 检查 service_a.py / service_b.py 两个调用方——它们必须继续正常工作（回归测试）；(3) 业务测试要求 separator 生效。注意：改核心接口时，所有调用点都要考虑，别让别的地方悄悄坏掉。",
+  "hint_round1": "业务/回归测试仍有失败。改 format_entry 签名时，注意默认值必须保持向后兼容；如果 service 传了多余参数或用了新能力，检查调用点。",
+  "check_biz": "pytest tests/test_biz.py -q",
+  "check_regress": "pytest tests/test_regress.py -q"
+}

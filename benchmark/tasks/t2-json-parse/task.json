@@ -1,0 +1,10 @@
+{
+  "id": "t2-json-parse",
+  "difficulty": "B",
+  "max_rounds": 2,
+  "title": "健壮化 LLM 输出的 JSON 解析器",
+  "description": "你有一个解析 LLM 输出的函数（src/robust_json.py），它把模型返回的文本转成 dict。实际使用中模型经常输出畸形文本：被 ```json 代码块包裹、带尾逗号、用单引号、前后夹解释文字、多行等。当前解析器对很多这类输入直接失败。请改造 parse()，让它能容忍这些常见畸形（业务测试列出的场景必须通过），同时不能破坏标准 JSON 的解析行为（回归测试）。",
+  "hint_round1": "业务测试仍有场景失败。想想除了剥代码块，怎么处理尾逗号、单引号、前后夹文字。",
+  "check_biz": "pytest tests/test_biz.py -q",
+  "check_regress": "pytest tests/test_regress.py -q"
+}

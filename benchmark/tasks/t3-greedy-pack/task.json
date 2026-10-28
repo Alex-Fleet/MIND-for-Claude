@@ -1,0 +1,10 @@
+{
+  "id": "t3-greedy-pack",
+  "difficulty": "C",
+  "max_rounds": 3,
+  "title": "修复贪心打包的字符/字节错算",
+  "description": "你有一个贪心打包器（src/packer.py），把文件按内容打包，每包总长度不超过 10000 的上限。用户反馈：含中文内容时，明明没到上限却被拆成很多包，浪费。这个上限的语义是「字符数」而不是「字节数」。请修复 pack()，让打包按字符数判断（业务测试列出的场景必须通过），同时保持原有打包行为（回归测试）。",
+  "hint_round1": "业务测试仍失败。看看 size 是怎么算的——len(content.encode('utf-8')) 是字节数，中文一个字符占 3 字节。",
+  "check_biz": "pytest tests/test_biz.py -q",
+  "check_regress": "pytest tests/test_regress.py -q"
+}

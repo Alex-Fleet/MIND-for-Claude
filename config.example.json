@@ -6,8 +6,11 @@
     "daily_days": 30
   },
   "inject": {
-    "global_folders": ["exps"],
-    "shards": 24
+    "global_folders": [
+      "exps"
+    ],
+    "shards": 24,
+    "head_only": []
   },
   "thresholds": {
     "min_turns_for_summary": 1,

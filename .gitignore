@@ -13,8 +13,9 @@ config.json
 .env
 *.key
 
-# ── CLAUDE.md — MIND 生成，含用户个人辅助性程序设计规范 ──
+# ── CLAUDE.md / AGENTS.md — MIND 生成，含用户个人辅助性程序设计规范 ──
 CLAUDE.md
+AGENTS.md
 
 # ── 全局记忆 — 用户可编辑，含个人信息 ──
 memory/global/*.md
@@ -22,6 +23,10 @@ memory/global/checklists/
 memory/global/skills/
 memory/global/exps/
 memory/projects/**/*.md
+memory/archive/
+
+# ── 迁移临时产物 ──
+.migration-*.json
 
 # ── 用户私有的项目注册表（slug 分身映射 + 标签），出厂应为空 ──
 projects.json
@@ -29,6 +34,10 @@ projects.draft.json
 
 # ── Node ──
 dashboard/node_modules/
+benchmark/node_modules/
+
+# ── 评测产物（可重跑，不入库）──
+benchmark/results/
 
 # ── Python ──
 __pycache__/

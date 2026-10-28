@@ -1,0 +1,11 @@
+{
+  "id": "t2-config-parse",
+  "difficulty": "C",
+  "max_rounds": 3,
+  "title": "修复配置解析系统",
+  "description": "配置解析老是出问题，用户反馈：'我写了 name=\"hello world\" 结果不对'、'我明明设了 enabled=true 结果变成 false'、'我写的值被默认值覆盖了'、'非法配置居然没报错就用了'、'重复的键居然不报错'。请你把解析系统修好。用 pytest 验证。系统存在隐藏的验收测试（你看不到测试代码，但每轮会收到验收反馈）。你的自测通过不代表完成——验收测试全部通过才算修好。",
+  "hint_round1": "还有测试没过。用户补充：'嵌套得很深的配置读起来会崩'。",
+  "hint_round2": "再想想：带转义的字符串、空值、恰好是数字的值，这些情况解析得对吗？",
+  "check_biz": "pytest tests/test_biz.py -q",
+  "check_regress": "pytest tests/test_regress.py -q"
+}

@@ -1,0 +1,14 @@
+% 结构有问题的 TikZ 图（多个子图 + 嵌套 + 溢出）— 修复结构问题（不改变意图）
+\begin{tikzpicture}
+  \node at (0,0) {中心};
+  \node at (2,0) {节点文本过长会溢出到下一行};
+  \node at (4,0) {缺失坐标的节点};
+  \begin{scope}[xshift=5cm]
+    \node at (0,1) {子图节点一};
+    \node at (1,1) {子图超长文本这个也超了二十个字符};
+  \end{scope}
+\end{tikzpicture}
+
+\begin{tikzpicture}
+  \node at (0,0) {第二张图};
+\end{tikzpicture}

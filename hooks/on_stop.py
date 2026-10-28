@@ -157,8 +157,9 @@ def main():
         if monthly:
             bits.append(f"月报 ×{len(monthly)}（{'、'.join(monthly)}）")
         notify("MIND · 报告已生成", " ｜ ".join(bits))
-        # 后台触发记忆提案（detached，不阻塞）
-        spawn_propose()
+        # 记忆审核已关闭（2026-08-14）：不再后台触发提案，需要时手动
+        # `python3 scripts/propose_memories.py --dry-run`。
+        # spawn_propose()
 
     log("✓ Stop hook 完成")
 
