@@ -49,7 +49,7 @@ memory/
         │  ingest.py（文件I/O，无LLM）
         ▼
 ② turns 表（中心库，seq 级去重 UNIQUE(session_id,seq)）
-   data/db/nailong.db
+   data/db/mind.db
         │  summarize.py（LLM，一问一答→一条摘要）
         ▼
 ③ turn_summaries（DB行） ──同时落一份──▶ data/archive/turns/<日期>/<会话id>-turn-N.md
@@ -103,7 +103,7 @@ Stop-hook `systemMessage` 不渲染的缺口——让总结进度看得见。
 
 - **WAL 持久化**：`store._ensure_schema` 设 `PRAGMA journal_mode=WAL` + `busy_timeout=5000`——崩溃不损坏 DB、读写不互堵。
 - **统一日志**：`scripts/log_setup.py` 把 loguru 与标准库 logging 统一落盘 `data/logs/mind.log`（级别+时间戳，1MB 轮转，保留 5 份）；默认 file-only 不污染 hook 的 stdout/stderr 协议输出；loguru 缺失时优雅降级不拖垮脚本。已接线 10 个入口（ingest/summarize/digest/inject/recall/backup/propose/dashboard_server + 两 hook）。
-- **备份**：`scripts/backup.py` 用 `VACUUM INTO` 做在线一致性快照 → `data/backups/nailong-YYYYMMDD.db`，保留最近 2 份（`KEEP=2`）。自动触发：SessionStart hook 每次启动后台跑一次 `backup.py`（自带当天去重，实际每日一备，不阻塞启动）。`--force` 重备、`--check` 判断今天是否已备。
+- **备份**：`scripts/backup.py` 用 `VACUUM INTO` 做在线一致性快照 → `data/backups/mind-YYYYMMDD.db`，保留最近 2 份（`KEEP=2`）。自动触发：SessionStart hook 每次启动后台跑一次 `backup.py`（自带当天去重，实际每日一备，不阻塞启动）。`--force` 重备、`--check` 判断今天是否已备。
 - **测试**：`tests/` 走 pytest——`conftest.py`（临时库 fixture）、`test_store.py`（CRUD 幂等/边界/写后读回）、`test_api.py`（真实子进程服务器，回归 404/400/403）、`test_projects.py`（Registry 双向唯一）。测试依赖在 `requirements-dev.txt`。
 - **CI**：`.github/workflows/ci.yml`（push/PR 触发：`ruff check .` → `pytest`；最小权限 + concurrency 取消旧任务 + action 钉 SHA）+ `audit.yml`（每周 cron：`pip-audit`，依赖告警不进 push 管线）。ruff 配置集中在 `pyproject.toml`（7 条规则因 MIND 刻意设计忽略并逐条注明理由）。
 - **写侧幂等**：`apply_proposal` 已批过直接返回（不重复写记忆/加权重）；`confirm` 同条目 30s 防重。

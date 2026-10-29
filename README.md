@@ -30,7 +30,7 @@ Memory Plugin/                 # 项目根（可放任意位置）
 ├── dashboard/
 │   └── index.html             # 看板前端（暗色时间线，轮询 /api/feed）
 └── data/                      # 🔒 私密运行时数据（.gitignore 挡掉，不进分享）
-    ├── db/nailong.db          # SQLite 引擎
+    ├── db/mind.db             # SQLite 引擎
     ├── archive/               # 永久存档
     │   ├── turns/  daily/  monthly/
     │   ├── legacy-memories/   # 旧系统记忆

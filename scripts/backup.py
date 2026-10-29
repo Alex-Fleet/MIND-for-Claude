@@ -29,12 +29,12 @@ def backups_dir() -> Path:
 
 
 def today_backup_path() -> Path:
-    return backups_dir() / f"nailong-{time.strftime('%Y%m%d')}.db"
+    return backups_dir() / f"mind-{time.strftime('%Y%m%d')}.db"
 
 
 def cleanup(bdir: Path) -> None:
-    """只保留最近 KEEP 份 nailong-*.db 备份。"""
-    baks = sorted(bdir.glob("nailong-*.db"))
+    """只保留最近 KEEP 份 mind-*.db 备份。"""
+    baks = sorted(bdir.glob("mind-*.db"))
     for old in baks[:-KEEP]:
         try:
             old.unlink()

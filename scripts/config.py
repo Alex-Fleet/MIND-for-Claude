@@ -18,9 +18,10 @@ OLD_MEMORY_DB = Path(os.path.expanduser("~/.claude/memory/memory.db"))
 
 
 def _resolve_data_dir() -> Path:
-    """数据目录：env NAILONG_DATA_DIR > config.json 的 data_dir > 默认 BASE_DIR/data。
+    """数据目录：env MIND_DATA_DIR > env NAILONG_DATA_DIR（旧名，兼容）>
+    config.json 的 data_dir > 默认 BASE_DIR/data。
     代码(BASE_DIR) 与 数据(DATA_DIR) 解耦——产品可分享，私密数据留本地。"""
-    env = os.environ.get("NAILONG_DATA_DIR")
+    env = os.environ.get("MIND_DATA_DIR") or os.environ.get("NAILONG_DATA_DIR")
     if env:
         return Path(os.path.expanduser(env)).resolve()
     cfg_path = BASE_DIR / "config.json"
@@ -81,7 +82,7 @@ def get_paths() -> dict:
     return {
         "base_dir": BASE_DIR,
         "data_dir": DATA_DIR,
-        "db_path": DATA_DIR / "db" / "nailong.db",
+        "db_path": DATA_DIR / "db" / "mind.db",
         "archive_dir": DATA_DIR / "archive",
         "turns_dir": DATA_DIR / "archive" / "turns",
         "daily_dir": DATA_DIR / "archive" / "daily",

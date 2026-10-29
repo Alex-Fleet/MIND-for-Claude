@@ -11,7 +11,7 @@ import sqlite3
 
 from config import get_paths
 
-logger = logging.getLogger("nailong.store")
+logger = logging.getLogger("mind.store")
 
 # Schema 版本：表结构每变一次 +1（PRAGMA user_version 落盘）。
 # v1 = 基线（DDL + 历史幂等列 validity）。

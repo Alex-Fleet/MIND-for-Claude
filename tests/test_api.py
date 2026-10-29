@@ -35,11 +35,11 @@ def api_server(tmp_path_factory):
     # 预建空库：dashboard 用只读连接，DB 文件必须先存在
     sys.path.insert(0, str(SCRIPTS))
     from store import Store
-    Store(db_path=str(tmp_path / "db" / "nailong.db"))
+    Store(db_path=str(tmp_path / "db" / "mind.db"))
 
     port = _free_port()
     env = dict(os.environ)
-    env["NAILONG_DATA_DIR"] = str(tmp_path)
+    env["MIND_DATA_DIR"] = str(tmp_path)
     proc = subprocess.Popen(
         [sys.executable, str(SCRIPTS / "dashboard_server.py"), "--port", str(port)],
         env=env,
