@@ -1,5 +1,24 @@
 # Changelog
 
+## [v1.12.2] - 2026-10-30
+
+- 补齐 v1.12.0 / v1.12.1 的版本记录（前两次提交漏写 CHANGELOG）。
+
+## [v1.12.1] - 2026-10-29
+
+- **旧库改名**：`data/db/nailong.db` → `data/db/mind.db`（1.48 GB，改名前已备份到 `~/Backups/mind-db-<时间戳>/`）；`scripts/config.py` 的 `db_path`、`scripts/backup.py` 的备份文件名、`scripts/store.py` 的 logger 名同步改；`README.md` / `ARCHITECTURE.md` 路径说明同步。
+- **环境变量兼容改名**：`MIND_DATA_DIR` 优先，`NAILONG_DATA_DIR` 仍然识别（旧配置不失效）。
+- **GitHub 仓库改名**：`Alex-Fleet/MIND` → `Alex-Fleet/MIND-for-Claude`，本地 remote 同步更新。
+- **清理**：删除 12 个旧路径兼容 symlink（Archived/Opensource 下的项目入口），删除 `data/backups/nailong-20261024.db`（保留最新一份并改名 `mind-20261027.db`）；`.gitignore` 补 `benchmark/node_modules/`、`benchmark/results/`、`memory/archive/`、`AGENTS.md`、`.migration-*.json`。
+- `projects.json` 中 12 处 `-Users-user-alex-...` 形式的字段保留不动——那是 Claude Code 的 session key（历史路径编码），改了会找不到旧会话。
+
+## [v1.12.0] - 2026-10-28
+
+- **`head_only` 注入策略**：`scripts/inject.py` 新增 `_extract_first_section()`，配置项 `inject.head_only` 指定只注入「一级标题 + 第一个 `##` 章节」的文件，其余章节按需读取。
+- **迁移路径适配**：hook、项目注册表、配置文件统一指向 `Opensource/MIND-for-Claude`。
+- **评测工具入库**：`benchmark/`（任务定义、runner、扩展）纳入版本控制，`node_modules` 与 `results` 走 gitignore。
+- **规范文件热更新**：Claude 侧每次 hook 重读、DSH 侧按 mtime 检查，改完下一轮生效，无需重启。
+
 ## [Unreleased]
 
 - **Git 历史重写**：版本号唯一宿主改为 main 的 merge/发布 commit（**merge commit 即版本点**，message 版本号式 `vX.Y.Z: ...`）；分支 commit 去版本号、**不打 git tag**（历史 tag 已删，可回溯靠 commit message + CHANGELOG）；重写 v1.6.0~v1.10.0 历史（`Merge branch` → `v...`）；编程规范 Git 章节同步改；新建 `docs/research/git-history-cleanup.md` 记录改造方法（含 msg-filter 脚本 + force push 流程，可复用）
